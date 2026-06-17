@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Snap</title>
+    <meta name="description" content="Snap a photo of a business card and save it instantly to Apple Contacts. A macOS menu bar app powered by AI.">
+    <meta property="og:title" content="Contact Snap">
+    <meta property="og:description" content="Snap a photo of a business card and save it instantly to Apple Contacts.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#8B5CF6">
+    <link rel="icon" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' y1='0' x2='100' y2='100' gradientUnits='userSpaceOnUse'&gt;&lt;stop offset='0' stop-color='%230EA5E9'/&gt;&lt;stop offset='1' stop-color='%238B5CF6'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='100' height='100' rx='22' fill='url(%23g)'/&gt;&lt;circle cx='50' cy='36' r='16' fill='white'/&gt;&lt;path d='M14 88 C14 64 28 54 50 54 C72 54 86 64 86 88 Z' fill='white'/&gt;&lt;/svg&gt;">
+    <style>
+        :root {
+            --brand-start: #0EA5E9;
+            --brand-end: #8B5CF6;
+            --text: #1a1a1a;
+            --text-muted: #5f5f67;
+            --bg: #fbfbfd;
+            --card-bg: #ffffff;
+            --rule: #e6e6ec;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text: #f2f2f5;
+                --text-muted: #a8a8b2;
+                --bg: #0c0c10;
+                --card-bg: #16161b;
+                --rule: #26262c;
+            }
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--brand-end); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--brand-start), var(--brand-end));
+            padding: 96px 24px 88px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -30%; left: -15%;
+            width: 60%; height: 80%;
+            background: radial-gradient(closest-side, rgba(255,255,255,0.18), transparent 70%);
+            pointer-events: none;
+        }
+        .icon-wrap {
+            width: 104px;
+            height: 104px;
+            margin: 0 auto 28px;
+            border-radius: 22px;
+            box-shadow: 0 16px 48px rgba(139, 92, 246, 0.36), 0 4px 12px rgba(0,0,0,0.16);
+            overflow: hidden;
+            position: relative;
+        }
+        .icon-wrap svg { display: block; width: 100%; height: 100%; }
+        h1 {
+            font-size: 44px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 12px;
+            color: white;
+        }
+        .tagline {
+            font-size: 20px;
+            max-width: 560px;
+            margin: 0 auto;
+            opacity: 0.96;
+        }
+        .sub {
+            font-size: 14px;
+            opacity: 0.78;
+            margin: 14px 0 0;
+            letter-spacing: 0.01em;
+        }
+
+        /* CONTENT */
+        main {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 64px 24px 32px;
+        }
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            margin: 0 0 8px;
+            text-align: center;
+        }
+        .section-lede {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 40px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-bottom: 64px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--rule);
+            border-radius: 16px;
+            padding: 26px 22px 22px;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-icon {
+            font-size: 30px;
+            line-height: 1;
+            margin-bottom: 14px;
+        }
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 6px;
+        }
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 20px;
+            flex: 1;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--brand-start), var(--brand-end));
+            color: white !important;
+            font-weight: 600;
+            font-size: 13.5px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            text-align: center;
+            align-self: flex-start;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .btn:hover { text-decoration: none; opacity: 0.94; transform: translateY(-1px); }
+        .btn-soon {
+            background: transparent;
+            color: var(--text-muted) !important;
+            border: 1px solid var(--rule);
+            font-weight: 500;
+            cursor: default;
+            pointer-events: none;
+        }
+        .btn-soon:hover { transform: none; opacity: 1; }
+
+        /* ABOUT */
+        .about {
+            background: var(--card-bg);
+            border: 1px solid var(--rule);
+            border-radius: 16px;
+            padding: 32px 28px;
+            margin-bottom: 48px;
+        }
+        .about h2 {
+            font-size: 18px;
+            text-align: left;
+            margin-bottom: 14px;
+        }
+        .about p {
+            margin: 0 0 14px;
+            color: var(--text);
+        }
+        .about p:last-child { margin: 0; }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--rule);
+            padding: 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        footer a { color: var(--text-muted); }
+        footer a:hover { color: var(--brand-end); }
+        footer .dot { opacity: 0.5; margin: 0 8px; }
+
+        @media (max-width: 560px) {
+            .hero { padding: 72px 22px 64px; }
+            h1 { font-size: 34px; }
+            .tagline { font-size: 17px; }
+            .icon-wrap { width: 88px; height: 88px; border-radius: 18px; }
+            main { padding-top: 48px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="iconbg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#0EA5E9"/>
+                        <stop offset="1" stop-color="#8B5CF6"/>
+                    </linearGradient>
+                </defs>
+                <rect width="100" height="100" fill="url(#iconbg)"/>
+                <circle cx="50" cy="36" r="16" fill="white" opacity="0.97"/>
+                <path d="M14 88 C14 64 28 54 50 54 C72 54 86 64 86 88 Z" fill="white" opacity="0.97"/>
+            </svg>
+        </div>
+        <h1>Contact Snap</h1>
+        <p class="tagline">Snap a photo of a business card. Save the contact instantly.</p>
+        <p class="sub">macOS &middot; Menu bar app &middot; Powered by AI</p>
+    </header>
+
+    <main>
+        <h2>How it works</h2>
+        <p class="section-lede">Three steps from card to contact &mdash; no typing required.</p>
+
+        <div class="cards">
+            <article class="card">
+                <div class="card-icon">📸</div>
+                <h3 class="card-title">Snap or import</h3>
+                <p class="card-desc">Click the Contact Snap icon in your menu bar, then take a photo with your iPhone's camera or drop in an image of any business card.</p>
+            </article>
+
+            <article class="card">
+                <div class="card-icon">✨</div>
+                <h3 class="card-title">AI reads the card</h3>
+                <p class="card-desc">Gemini AI extracts the name, title, company, email, phone, address, and website &mdash; accurately, in seconds.</p>
+            </article>
+
+            <article class="card">
+                <div class="card-icon">📇</div>
+                <h3 class="card-title">Saved to Apple Contacts</h3>
+                <p class="card-desc">A complete contact record appears in your Mac's address book. Review the details before saving, then it syncs to all your Apple devices.</p>
+            </article>
+        </div>
+
+        <h2>Get it</h2>
+        <p class="section-lede">A free download for Macs running macOS Ventura or later.</p>
+
+        <div class="cards" style="grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto;">
+            <article class="card">
+                <div class="card-icon">💻</div>
+                <h3 class="card-title">Contact Snap for Mac</h3>
+                <p class="card-desc">Works on Apple Silicon and Intel Macs. Requires macOS Ventura (13) or later. The app lives in your menu bar &mdash; always one click away.</p>
+                <a class="btn" href="ContactSnap.dmg" download>Download for Mac</a>
+            </article>
+        </div>
+
+        <section class="about">
+            <h2>A note from the maker</h2>
+            <p>
+                I'm Michael Shear. By day, I'm the Chief U.K. Correspondent for The New York Times,
+                based in London. I built Contact Snap because I kept losing business cards &mdash; or
+                forgetting to enter them into my contacts before they got buried in a bag or pocket.
+            </p>
+            <p>
+                This is my second app, after <a href="https://shearmds.github.io/ReadThisLater/">Read This Later</a>.
+                I'm not a professional developer; I built it with the help of Claude, Anthropic's
+                AI assistant. If you hit a bug or have a suggestion, my email is at the bottom.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <a href="https://shearmds.github.io/ReadThisLater/">Read This Later</a>
+        <span class="dot">·</span>
+        <a href="mailto:shearm@mac.com">Contact</a>
+        <span class="dot">·</span>
+        <span>&copy; 2026 Michael Shear</span>
+    </footer>
+</body>
+</html>
